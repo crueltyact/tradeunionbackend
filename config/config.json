@@ -1,0 +1,28 @@
+{
+    "Postgres": {
+        "Host": "localhost",
+        "Port": "5432",
+        "User": "root",
+        "Password": "root",
+        "DBName": "profkom",
+        "SSLMode": "disable",
+        "Settings": {
+          "MaxOpenConns": 10,
+          "ConnMaxLifetime": 10000,
+          "MaxIdleConns": 5,
+          "ConnMaxIdleTime": 10000
+        }
+      },
+    "S3": {
+      "Bucket": "profkom-dev",
+      "Key": "YCAJEjh8P8ttT2kFrqyQS6mnM",
+      "Secret": "YCPMI9dmM3B7s4tPgHRziMP1gZTwc-brjhbAsCSC",
+      "Region": "ru"
+    },
+    "Services": {
+      "Auth": {
+        "JwtHashKey": "asdqwe2131241eqeqw",
+        "S3ImageUrl": "https://storage.yandexcloud.net/profkom-dev"
+      }
+    }      
+}
