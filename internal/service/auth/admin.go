@@ -48,6 +48,8 @@ func (s *Service) AdminSingUp(ctx context.Context, req models.SignUpRequest) (re
 			return err
 		}
 
+		user.ID = uuid.New()
+
 		err = s.repo.InsertUser(ctx, &user)
 		if err != nil {
 			return err

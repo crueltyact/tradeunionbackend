@@ -26,13 +26,15 @@ func New(db *sqlx.DB, ctxGetter *trmsqlx.CtxGetter) *Repository {
 func (r *Repository) InsertUser(ctx context.Context, user *entities.User) (err error) {
 	query := `
 		INSERT INTO auth."user" (
+			id,
 			role,
 			login,
 			password
 		) VALUES (
 			$1,
 			$2,
-			$3
+			$3,
+			$4
 		) RETURNING *
 	`
 
@@ -40,6 +42,7 @@ func (r *Repository) InsertUser(ctx context.Context, user *entities.User) (err e
 		ctx,
 		user,
 		query,
+		user.ID,
 		user.Role,
 		user.Login,
 		user.Password,
@@ -155,4 +158,3 @@ func (r *Repository) SelectUserByLogin(ctx context.Context, login string) (user 
 
 	return user, err
 }
-

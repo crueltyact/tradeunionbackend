@@ -99,5 +99,5 @@ CREATE TABLE IF NOT EXISTS chat.messages (
     chat_id UUID,
     created_at TIMESTAMP DEFAULT now(),
     updated_at TIMESTAMP DEFAULT now(),
-    FOREIGN KEY (chat_id) REFERENCES chat.chat(id),
+    FOREIGN KEY (chat_id) REFERENCES chat.chat(id)
 );
