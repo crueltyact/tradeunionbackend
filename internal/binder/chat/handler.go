@@ -10,13 +10,14 @@ import (
 	"sync"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/gofiber/websocket/v2"
 	"github.com/google/uuid"
 )
 
 var (
 	chats   map[uuid.UUID]map[uuid.UUID]*websocket.Conn = make(map[uuid.UUID]map[uuid.UUID]*websocket.Conn)
-	rwmutex                                       = sync.RWMutex{}
+	rwmutex                                             = sync.RWMutex{}
 )
 
 type Handler struct {
@@ -144,82 +145,108 @@ func (h *Handler) GetChats(c *fiber.Ctx) error {
 	return c.JSON(resp)
 }
 
-// func (h *Handler) HandleClientConnection(c *websocket.Conn) {
-// 	var (
-// 		code int
-// 		err  error
-// 	)
+func (h *Handler) PostClientChat(c *fiber.Ctx) error {
+	tradeUnionID := c.Cookies(consts.TradeUnionIDKey)
+	if tradeUnionID == "" {
+		return c.SendStatus(fiber.StatusNotFound)
+	}
+	log.Info(tradeUnionID)
 
-// 	ctx := context.Background()
-// 	defer func() {
-// 		if err != nil {
-// 			c.WriteJSON(map[string]string{"error": err.Error()})
-// 			c.CloseHandler()(code, err.Error())
+	request := models.PostClientChatRequest{
+		TradeUnionID: tradeUnionID,
+	}
 
-// 			return
-// 		}
-// 	}()
+	resp, err := h.service.CreateClientChat(c.Context(), request)
+	if err != nil {
+		return err
+	}
 
-// 	tradeUnionID, ok := c.Locals(consts.TradeUnionIDKey).(string)
-// 	if !ok {
-// 		code = fiber.StatusUnauthorized
-// 		err = fmt.Errorf("Unathorized")
+	return c.JSON(resp)
+}
 
-// 		return
-// 	}
+func (h *Handler) HandleClientConnection(c *websocket.Conn) {
+	var (
+		code int
+		err  error
+	)
 
-// 	chatID := c.Params("chat_id")
-// 	chatUUID, err := uuid.Parse(chatID)
-// 	if err != nil {
-// 		code = fiber.StatusNotFound
+	ctx := context.Background()
+	defer func() {
+		if err != nil {
+			c.WriteJSON(map[string]string{"error": err.Error()})
+			c.CloseHandler()(code, err.Error())
 
-// 		return
-// 	}
+			return
+		}
+	}()
 
-// 	rwmutex.Lock()
-// 	conns, ok := chats[chatUUID]
-// 	if !ok {
-// 		conns = map[int]*websocket.Conn{}
+	tradeUnionID := c.Cookies(consts.TradeUnionIDKey)
+	if tradeUnionID == "" {
+		code = fiber.StatusUnauthorized
+		err = fmt.Errorf("Unathorized")
 
-// 		chats[chatUUID] = conns
-// 	}
+		return
+	}
 
-// 	conns[user.UserID] = c
-// 	rwmutex.Unlock()
+	chatID := c.Params("chat_id")
+	chatUUID, err := uuid.Parse(chatID)
+	if err != nil {
+		code = fiber.StatusNotFound
 
-// 	for {
-// 		mt, msg, err := c.ReadMessage()
-// 		if err != nil {
-// 			break
-// 		}
+		return
+	}
 
-// 		var request models.PostMessageRequest
-// 		err = json.Unmarshal(msg, &request)
-// 		if err != nil {
-// 			break
-// 		}
+	userID, err := h.service.GetUserIDByTradeUnionID(ctx, tradeUnionID)
+	if err != nil {
+		code = fiber.StatusUnauthorized
 
-// 		request.ChatID = chatUUID
-// 		request.UserID = user.UserID
+		return
+	}
 
-// 		resp, err := h.service.SendMessage(ctx, request)
-// 		if err != nil {
-// 			code = fiber.StatusInternalServerError
+	rwmutex.Lock()
+	conns, ok := chats[chatUUID]
+	if !ok {
+		conns = map[uuid.UUID]*websocket.Conn{}
 
-// 			return
-// 		}
+		chats[chatUUID] = conns
+	}
 
-// 		message, err := json.Marshal(resp)
-// 		if err != nil {
-// 			code = fiber.StatusInternalServerError
+	conns[userID] = c
+	rwmutex.Unlock()
 
-// 			return
-// 		}
+	for {
+		mt, msg, err := c.ReadMessage()
+		if err != nil {
+			break
+		}
 
-// 		for _, conn := range conns {
-// 			if err := conn.WriteMessage(mt, message); err != nil {
-// 				break
-// 			}
-// 		}
-// 	}
-// }
+		var request models.PostMessageRequest
+		err = json.Unmarshal(msg, &request)
+		if err != nil {
+			break
+		}
+
+		request.ChatID = chatUUID
+		request.UserID = userID
+
+		resp, err := h.service.SendMessage(ctx, request)
+		if err != nil {
+			code = fiber.StatusInternalServerError
+
+			return
+		}
+
+		message, err := json.Marshal(resp)
+		if err != nil {
+			code = fiber.StatusInternalServerError
+
+			return
+		}
+
+		for _, conn := range conns {
+			if err := conn.WriteMessage(mt, message); err != nil {
+				break
+			}
+		}
+	}
+}

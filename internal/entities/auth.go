@@ -17,6 +17,10 @@ type (
 		FirstName  string      `db:"first_name"`
 		SecondName string      `db:"second_name"`
 		Patronymic string      `db:"patronymic"`
-		ImageUrl   null.String `db:"iamge_url"`
+		ImageUrl   null.String `db:"image_url"`
+	}
+	Client struct {
+		UserID       uuid.UUID `db:"id"`
+		TradeUnionID string    `db:"trade_union_id"`
 	}
 )

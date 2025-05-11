@@ -116,4 +116,12 @@ func (b *Binder) mapClient() {
 
 		documents.Get("/", b.handler.Documents.GetDocuments)
 	}
+
+	{
+		chat := v1.Group("/chat")
+
+		chat.Post("/", b.handler.Chat.PostClientChat)
+
+		chat.Get("/ws/:chat_id", websocket.New(b.handler.Chat.HandleClientConnection))
+	}
 }

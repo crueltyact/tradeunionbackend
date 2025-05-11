@@ -4,8 +4,8 @@ import "github.com/google/uuid"
 
 type (
 	PostChatRequest struct {
-		Title string `json:"title"`
-		Users []uuid.UUID  `json:"users"`
+		Title string      `json:"title"`
+		Users []uuid.UUID `json:"users"`
 	}
 	PostChatResponse struct {
 		ChatID uuid.UUID `json:"chat_id"`
@@ -37,5 +37,19 @@ type (
 	}
 	GetChatsResponse struct {
 		Chats []Chat `json:"chats"`
+	}
+	PostClientChatRequest struct {
+		TradeUnionID string
+	}
+	PostClientChatResponse struct {
+		ChatID   string                `json:"chat_id"`
+		Worker   Worker                `json:"worker"`
+		Messages []PostMessageResponse `json:"messages"`
+	}
+	Worker struct {
+		ImageURL   string `json:"iamge_url"`
+		FirstName  string `json:"first_name"`
+		SecondName string `json:"second_name"`
+		Patronymic string `json:"patronymic"`
 	}
 )
