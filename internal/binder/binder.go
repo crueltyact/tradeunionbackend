@@ -57,6 +57,8 @@ func (b *Binder) mapAdmin() {
 
 		news.Post("/", b.mw.Auth, b.handler.News.PostNews)
 
+		news.Delete("/:new_id", b.mw.Auth, b.handler.News.DeleteNew)
+
 	}
 
 	{

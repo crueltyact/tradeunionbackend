@@ -5,6 +5,7 @@ import (
 	"profkom/internal/models"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 type Handler struct {
@@ -70,4 +71,20 @@ func (h *Handler) GetNew(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(resp)
+}
+
+func (h *Handler) DeleteNew(c *fiber.Ctx) error {
+	id := c.Params("new_id")
+
+	uuid, err := uuid.Parse(id)
+	if err != nil {
+		return err
+	}
+
+	err = h.service.DeleteNew(c.Context(), uuid)
+	if err != nil {
+		return err
+	}
+
+	return c.SendStatus(fiber.StatusOK)
 }

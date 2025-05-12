@@ -41,3 +41,7 @@ func (s *Service) UploadNews(ctx context.Context, request models.PostNewRequest)
 
 	return err
 }
+
+func (s *Service) DeleteNew(ctx context.Context, newID uuid.UUID) (err error) {
+	return s.repository.DeleteNew(ctx, newID)
+}

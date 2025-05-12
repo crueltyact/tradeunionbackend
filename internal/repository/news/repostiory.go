@@ -99,3 +99,21 @@ func (r *Repository) InsertNew(ctx context.Context, new *entities.New) (err erro
 
 	return err
 }
+
+func (r *Repository) DeleteNew(ctx context.Context, id uuid.UUID) (err error) {
+	query := `
+		delete from content.news
+		where id = $1
+	`
+
+	_, err = r.ctxGetter.DefaultTrOrDB(ctx, r.db).ExecContext(
+		ctx,
+		query,
+		id,
+	)
+	if err != nil {
+		return err
+	}
+
+	return err
+}
