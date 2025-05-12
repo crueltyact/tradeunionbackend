@@ -6,7 +6,6 @@ import (
 	"profkom/internal/models"
 	"profkom/internal/service/auth"
 	"profkom/pkg/consts"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/valyala/fasthttp"
@@ -33,14 +32,6 @@ func (h *Handler) SignUp(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-
-	cookie := &fiber.Cookie{
-		Name:     "token",
-		Value:    resp.JwtToken, // предположим, что в ответе есть поле Token
-		Expires:  time.Now().Add(24 * time.Hour),
-	}
-
-	c.Cookie(cookie)
 
 	return c.JSON(resp)
 }
@@ -71,14 +62,6 @@ func (h *Handler) SignIn(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-
-	cookie := &fiber.Cookie{
-		Name:     "token",
-		Value:    resp.Token, // предположим, что в ответе есть поле Token
-		Expires:  time.Now().Add(24 * time.Hour),
-	}
-
-	c.Cookie(cookie)
 
 	return c.JSON(resp)
 }

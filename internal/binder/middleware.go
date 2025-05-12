@@ -9,7 +9,6 @@ import (
 )
 
 const (
-	key          = "token"
 	claimsKey    = "user"
 	UserID       = "userID"
 	TradeUnionID = "trade-union-id"
@@ -26,10 +25,7 @@ func New(secret string) *Middleware {
 }
 
 func (m *Middleware) Auth(ctx *fiber.Ctx) error {
-	token := ctx.Cookies(key)
-	if token == "" {
-		return fiber.ErrUnauthorized
-	}
+	token := ctx.Get("Authorization")
 
 	claims, err := m.parseJwt(token)
 	if err != nil {
