@@ -50,6 +50,8 @@ func (b *Binder) mapAdmin() {
 		guide.Delete("/:guide_id", b.mw.Auth, b.handler.Guide.DeleteGuide)
 
 		guide.Delete("/theme/:theme_id", b.mw.Auth, b.handler.Guide.DeleteTheme)
+
+		guide.Post("/theme", b.mw.Auth, b.handler.Guide.PostTheme)
 	}
 
 	{

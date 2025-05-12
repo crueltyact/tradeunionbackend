@@ -11,5 +11,6 @@ type (
 		InsertGuide(ctx context.Context, guidesType string, guides []models.Guide) error
 		DeleteGuide(ctx context.Context, id int) (err error)
 		DeleteTheme(ctx context.Context, id int) (err error)
+		CreateTheme(ctx context.Context, req models.PostThemeRequest) (err error)
 	}
 )

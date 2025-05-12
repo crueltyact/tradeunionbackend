@@ -2,16 +2,17 @@ package guide
 
 import (
 	"profkom/internal/models"
+	"profkom/internal/service/guide"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 type Handler struct {
-	service service
+	service *guide.Service
 }
 
-func New(service service) *Handler {
+func New(service *guide.Service) *Handler {
 	return &Handler{
 		service: service,
 	}
@@ -69,4 +70,19 @@ func (h *Handler) DeleteTheme(c *fiber.Ctx) error {
 	}
 
 	return err
+}
+
+func (h *Handler) PostTheme(c *fiber.Ctx) error {
+	var request models.PostThemeRequest
+
+	if err := c.BodyParser(&request); err != nil {
+		return err
+	}
+
+	err := h.service.CreateTheme(c.Context(), request)
+	if err != nil {
+		return err
+	}
+
+	return c.SendStatus(fiber.StatusOK)
 }

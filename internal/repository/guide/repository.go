@@ -216,3 +216,30 @@ func (r *Repository) DeleteTheme(ctx context.Context, id int) (err error) {
 
 	return err
 }
+
+func (r *Repository) InsertTheme(ctx context.Context, theme models.PostThemeRequest) (err error) {
+	query := `
+		insert into guides.themes(
+			title,
+			content,
+			guide_id
+		) values(
+			$1,
+			$2,
+			$3 
+		)
+	`
+
+	_, err = r.ctxGetter.DefaultTrOrDB(ctx, r.db).ExecContext(
+		ctx,
+		query,
+		theme.Title,
+		theme.Content,
+		theme.GuideID,
+	)
+	if err != nil {
+		return err
+	}
+
+	return err
+}
