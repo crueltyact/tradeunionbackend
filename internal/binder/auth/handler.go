@@ -38,9 +38,6 @@ func (h *Handler) SignUp(c *fiber.Ctx) error {
 		Name:     "token",
 		Value:    resp.JwtToken, // предположим, что в ответе есть поле Token
 		Expires:  time.Now().Add(24 * time.Hour),
-		HTTPOnly: true,   // нельзя читать из JS
-		Secure:   false,  // true в проде по HTTPS
-		SameSite: "None", // обязательно для кросс-доменных запросов
 	}
 
 	c.Cookie(cookie)
@@ -79,9 +76,6 @@ func (h *Handler) SignIn(c *fiber.Ctx) error {
 		Name:     "token",
 		Value:    resp.Token, // предположим, что в ответе есть поле Token
 		Expires:  time.Now().Add(24 * time.Hour),
-		HTTPOnly: true,   // нельзя читать из JS
-		Secure:   false,  // true в проде по HTTPS
-		SameSite: "None", // обязательно для кросс-доменных запросов
 	}
 
 	c.Cookie(cookie)
