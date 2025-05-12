@@ -13,7 +13,6 @@ import (
 	trmsqlx "github.com/avito-tech/go-transaction-manager/sqlx"
 	txmanager "github.com/avito-tech/go-transaction-manager/trm/manager"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
 func Run(ctx context.Context, cfg *config.Config) (err error) {
@@ -39,10 +38,19 @@ func Run(ctx context.Context, cfg *config.Config) (err error) {
 	handler := binder.NewHandler(service)
 
 	app := fiber.New()
-	app.Use(cors.New(cors.Config{
-		AllowOrigins: "*",
-		AllowHeaders: "Origin, Content-Type, Accept",
-	}))
+	app.Use(func(c *fiber.Ctx) error {
+		origin := c.Get("Origin")
+		if origin != "" {
+			c.Set("Access-Control-Allow-Origin", origin)
+			c.Set("Access-Control-Allow-Credentials", "true")
+			c.Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
+			c.Set("Access-Control-Allow-Headers", "Content-Type, Authorization, Cookie")
+		}
+		if c.Method() == "OPTIONS" {
+			return c.SendStatus(fiber.StatusNoContent)
+		}
+		return c.Next()
+	})
 
 	binder := binder.NewBinder(app, handler)
 	binder.BindRoutes()
