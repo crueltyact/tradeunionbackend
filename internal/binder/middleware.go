@@ -3,6 +3,7 @@ package binder
 import (
 	"fmt"
 	"profkom/internal/models"
+	"profkom/pkg/consts"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
@@ -56,4 +57,12 @@ func (m *Middleware) parseJwt(jwtToken string) (*models.ClaimsJwt, error) {
 	}
 
 	return claims, nil
+}
+
+func (m *Middleware) CheckTradeUnionID(ctx *fiber.Ctx) error {
+	tradeUnionID := ctx.Get(consts.TradeUnionIDKey)
+
+	ctx.Locals(consts.TradeUnionIDKey, tradeUnionID)
+
+	return ctx.Next()
 }

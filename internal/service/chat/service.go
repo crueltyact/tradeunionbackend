@@ -2,12 +2,14 @@ package chat
 
 import (
 	"context"
+	"fmt"
 	"profkom/internal/entities"
 	"profkom/internal/models"
 	"profkom/internal/repository/chat"
 	"profkom/pkg/s3"
 
 	txmanager "github.com/avito-tech/go-transaction-manager/trm/manager"
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/google/uuid"
 )
 
@@ -107,7 +109,7 @@ func (s *Service) GetChats(ctx context.Context, req models.GetChatsRequest) (res
 	}
 
 	for _, chat := range chats {
-		messages, err := s.repo.SelectMessages(ctx, req.UserID, chat.ID)
+		messages, err := s.repo.SelectMessages(ctx, chat.ID)
 		if err != nil {
 			return resp, err
 		}
@@ -144,6 +146,7 @@ func (s *Service) CreateClientChat(ctx context.Context, req models.PostClientCha
 		if err != nil {
 			return err
 		}
+		log.Info(fmt.Sprintf("user %s - exist is %s", req.TradeUnionID, exist))
 
 		if !exist {
 			client.UserID = uuid.New()
@@ -155,6 +158,7 @@ func (s *Service) CreateClientChat(ctx context.Context, req models.PostClientCha
 		} else {
 			err = s.repo.SelectClient(ctx, &client)
 			if err != nil {
+				log.Error("fail get user", err)
 				return err
 			}
 		}
@@ -187,7 +191,7 @@ func (s *Service) CreateClientChat(ctx context.Context, req models.PostClientCha
 				return err
 			}
 
-			messages, err := s.repo.SelectMessages(ctx, client.UserID, chat.ID)
+			messages, err := s.repo.SelectMessages(ctx, chat.ID)
 			if err != nil {
 				return err
 			}

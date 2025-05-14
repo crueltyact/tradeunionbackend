@@ -126,6 +126,6 @@ func (b *Binder) mapClient() {
 
 		chat.Post("/", b.handler.Chat.PostClientChat)
 
-		chat.Get("/ws/:chat_id", websocket.New(b.handler.Chat.HandleClientConnection))
+		chat.Get("/ws/:chat_id", b.mw.CheckTradeUnionID, websocket.New(b.handler.Chat.HandleClientConnection))
 	}
 }

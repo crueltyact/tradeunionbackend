@@ -146,9 +146,10 @@ func (h *Handler) GetChats(c *fiber.Ctx) error {
 }
 
 func (h *Handler) PostClientChat(c *fiber.Ctx) error {
-	tradeUnionID := c.Cookies(consts.TradeUnionIDKey)
+	tradeUnionID := c.Get(consts.TradeUnionIDKey)
 	if tradeUnionID == "" {
-		return c.SendStatus(fiber.StatusNotFound)
+		return c.SendStatus(fiber.StatusUnauthorized)
+
 	}
 	log.Info(tradeUnionID)
 
@@ -180,8 +181,9 @@ func (h *Handler) HandleClientConnection(c *websocket.Conn) {
 		}
 	}()
 
-	tradeUnionID := c.Cookies(consts.TradeUnionIDKey)
+	tradeUnionID := c.Locals(consts.TradeUnionIDKey).(string)
 	if tradeUnionID == "" {
+		log.Info(tradeUnionID)
 		code = fiber.StatusUnauthorized
 		err = fmt.Errorf("Unathorized")
 

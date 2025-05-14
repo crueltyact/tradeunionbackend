@@ -2,5 +2,5 @@ package consts
 
 const(
 	UserContextKey = "user"
-	TradeUnionIDKey  = "tradeUnionID"
+	TradeUnionIDKey  = "X-TradeUnion-ID"
 )

@@ -158,12 +158,12 @@ func (r *Repository) SelectChats(ctx context.Context, userID uuid.UUID) (chats [
 	return chats, err
 }
 
-func (r *Repository) SelectMessages(ctx context.Context, userID, chatID uuid.UUID) (messages []entities.Message, err error) {
+func (r *Repository) SelectMessages(ctx context.Context, chatID uuid.UUID) (messages []entities.Message, err error) {
 	query := `
 		select
 			*
 		from chat.messages
-		where chat_id = $1 and user_id = $2
+		where chat_id = $1
 	`
 
 	err = r.ctxGetter.DefaultTrOrDB(ctx, r.db).SelectContext(
@@ -171,7 +171,6 @@ func (r *Repository) SelectMessages(ctx context.Context, userID, chatID uuid.UUI
 		&messages,
 		query,
 		chatID,
-		userID,
 	)
 	if err != nil {
 		return messages, err
@@ -253,6 +252,7 @@ func (r *Repository) SelectClient(ctx context.Context, client *entities.Client) 
 func (r *Repository) SelectTradeUnionWorkerIDForHelp(ctx context.Context) (worker entities.User, err error) {
 	query := `
 		SELECT * FROM auth."user"
+		where role = 'worker'
 		ORDER BY random()
 		LIMIT 1
 	`
