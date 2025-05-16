@@ -45,7 +45,7 @@ func (h *Handler) HandleConnection(c *websocket.Conn) {
 			return
 		}
 	}()
-
+	
 	user, ok := c.Locals(consts.UserContextKey).(*models.ClaimsJwt)
 	if !ok {
 		code = fiber.StatusUnauthorized

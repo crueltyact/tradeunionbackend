@@ -66,3 +66,16 @@ func (m *Middleware) CheckTradeUnionID(ctx *fiber.Ctx) error {
 
 	return ctx.Next()
 }
+
+func (m *Middleware) AuthWebsocket(ctx *fiber.Ctx) error {
+	tradeUnionID := ctx.Query("jwtToken")
+
+	claims, err := m.parseJwt(tradeUnionID)
+	if err != nil {
+		return fiber.ErrUnauthorized
+	}
+
+	ctx.Locals(claimsKey, claims)
+
+	return ctx.Next()
+}

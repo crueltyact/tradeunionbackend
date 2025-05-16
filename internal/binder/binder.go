@@ -84,7 +84,7 @@ func (b *Binder) mapAdmin() {
 
 		chat.Get("/", b.mw.Auth, b.handler.Chat.GetChats)
 
-		chat.Get("/ws/:chat_id", b.mw.Auth, websocket.New(b.handler.Chat.HandleConnection))
+		chat.Get("/ws/:chat_id", b.mw.AuthWebsocket, websocket.New(b.handler.Chat.HandleConnection))
 	}
 }
 
