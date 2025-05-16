@@ -124,6 +124,7 @@ func (s *Service) GetChats(ctx context.Context, req models.GetChatsRequest) (res
 				UserID:    msg.UserID,
 				CreatedAt: msg.CreatedAt.Unix(),
 				UpdatedAt: msg.UpdatedAt.Unix(),
+				Role:      msg.Role,
 			})
 		}
 
@@ -202,6 +203,7 @@ func (s *Service) CreateClientChat(ctx context.Context, req models.PostClientCha
 				msgs = append(msgs, models.PostMessageResponse{
 					ID:        msg.ID,
 					Content:   msg.Content,
+					Role:      msg.Role,
 					ChatID:    msg.ChatID.String(),
 					UserID:    msg.UserID,
 					CreatedAt: msg.CreatedAt.Unix(),
