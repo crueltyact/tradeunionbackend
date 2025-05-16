@@ -75,12 +75,14 @@ func (r Repository) InsertMessage(ctx context.Context, message *entities.Message
 			id,
 			content,
 			user_id,
-			chat_id
+			chat_id,
+			role
 		) values(
 			$1,
 			$2,
 			$3,
-			$4	 
+			$4,
+			$5
 		) returning *
 	`
 
@@ -92,6 +94,7 @@ func (r Repository) InsertMessage(ctx context.Context, message *entities.Message
 		message.Content,
 		message.UserID,
 		message.ChatID,
+		message.Role,
 	)
 	if err != nil {
 		return err

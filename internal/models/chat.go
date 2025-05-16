@@ -12,11 +12,13 @@ type (
 	}
 	PostMessageRequest struct {
 		Content string    `json:"content"`
+		Role    string    `json:"omitempty"`
 		ChatID  uuid.UUID `json:"omitempty"`
 		UserID  uuid.UUID `json:"omitempty"`
 	}
 	PostMessageResponse struct {
 		ID        uuid.UUID `json:"id"`
+		Role      string    `json:"role"`
 		Content   string    `json:"content"`
 		ChatID    string    `json:"chat_id,omitempty"`
 		UserID    uuid.UUID `json:"user_id,omitempty"`

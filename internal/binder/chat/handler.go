@@ -45,7 +45,7 @@ func (h *Handler) HandleConnection(c *websocket.Conn) {
 			return
 		}
 	}()
-	
+
 	user, ok := c.Locals(consts.UserContextKey).(*models.ClaimsJwt)
 	if !ok {
 		code = fiber.StatusUnauthorized
@@ -104,6 +104,7 @@ func (h *Handler) HandleConnection(c *websocket.Conn) {
 
 		request.ChatID = chatUUID
 		request.UserID = user.UserID
+		request.Role = "admin"
 
 		resp, err := h.service.SendMessage(ctx, request)
 		if err != nil {
@@ -111,6 +112,7 @@ func (h *Handler) HandleConnection(c *websocket.Conn) {
 
 			return
 		}
+		resp.Role = "admin"
 
 		message, err := json.Marshal(resp)
 		if err != nil {
@@ -224,28 +226,36 @@ func (h *Handler) HandleClientConnection(c *websocket.Conn) {
 		var request models.PostMessageRequest
 		err = json.Unmarshal(msg, &request)
 		if err != nil {
+			log.Error(err)
 			break
 		}
 
 		request.ChatID = chatUUID
 		request.UserID = userID
+		request.Role = "client"
 
 		resp, err := h.service.SendMessage(ctx, request)
 		if err != nil {
 			code = fiber.StatusInternalServerError
+			log.Error(err)
 
 			return
 		}
 
+		resp.Role = "client"
+
 		message, err := json.Marshal(resp)
 		if err != nil {
 			code = fiber.StatusInternalServerError
+			log.Error(err)
 
 			return
 		}
 
 		for _, conn := range conns {
 			if err := conn.WriteMessage(mt, message); err != nil {
+				log.Error(err)
+
 				break
 			}
 		}

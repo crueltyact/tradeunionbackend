@@ -68,6 +68,7 @@ func (s *Service) SendMessage(ctx context.Context, req models.PostMessageRequest
 			ChatID:  req.ChatID,
 			Content: req.Content,
 			UserID:  req.UserID,
+			Role:    req.Role,
 		}
 
 		err = s.repo.InsertMessage(ctx, &message)
