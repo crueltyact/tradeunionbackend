@@ -44,7 +44,7 @@ func Run(ctx context.Context, cfg *config.Config) (err error) {
 			c.Set("Access-Control-Allow-Origin", origin)
 			c.Set("Access-Control-Allow-Credentials", "true")
 			c.Set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS")
-			c.Set("Access-Control-Allow-Headers", "Content-Type, Authorization, Cookie")
+			c.Set("Access-Control-Allow-Headers", "Content-Type, Authorization, Cookie, X-TradeUnion-ID")
 		}
 		if c.Method() == "OPTIONS" {
 			return c.SendStatus(fiber.StatusNoContent)
