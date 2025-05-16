@@ -60,7 +60,7 @@ func (m *Middleware) parseJwt(jwtToken string) (*models.ClaimsJwt, error) {
 }
 
 func (m *Middleware) CheckTradeUnionID(ctx *fiber.Ctx) error {
-	tradeUnionID := ctx.Get(consts.TradeUnionIDKey)
+	tradeUnionID := ctx.Params("tradeUnionID") 
 
 	ctx.Locals(consts.TradeUnionIDKey, tradeUnionID)
 

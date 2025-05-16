@@ -149,7 +149,6 @@ func (h *Handler) PostClientChat(c *fiber.Ctx) error {
 	tradeUnionID := c.Get(consts.TradeUnionIDKey)
 	if tradeUnionID == "" {
 		return c.SendStatus(fiber.StatusUnauthorized)
-
 	}
 	log.Info(tradeUnionID)
 
