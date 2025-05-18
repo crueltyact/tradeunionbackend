@@ -11,11 +11,11 @@ type Binder struct {
 	mw      *Middleware
 }
 
-func NewBinder(app *fiber.App, handler *Handler) *Binder {
+func NewBinder(app *fiber.App, handler *Handler, mw *Middleware) *Binder {
 	return &Binder{
 		app:     app,
 		handler: handler,
-		mw:      New("asdqwe2131241eqeqw"),
+		mw:      mw,
 	}
 }
 

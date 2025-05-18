@@ -5,9 +5,9 @@ import (
 	"profkom/internal/entities"
 )
 
-func (r *Repository) InserUserInfo(ctx context.Context, userInfo entities.UserInfo) (err error) {
+func (r *Repository) InsertUserInfo(ctx context.Context, userInfo entities.UserInfo) (err error) {
 	query := `
-		insert into profkom.user_info(
+		insert into auth.user_info(
 			user_id,
 			first_name,
 			second_name,

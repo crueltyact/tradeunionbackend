@@ -3,6 +3,7 @@ package binder
 import (
 	"fmt"
 	"profkom/internal/models"
+	"profkom/internal/service/auth"
 	"profkom/pkg/consts"
 
 	"github.com/gofiber/fiber/v2"
@@ -16,12 +17,14 @@ const (
 )
 
 type Middleware struct {
-	secret string
+	service *auth.Service
+	secret  string
 }
 
-func New(secret string) *Middleware {
+func New(secret string, service *auth.Service) *Middleware {
 	return &Middleware{
-		secret: secret,
+		secret:  secret,
+		service: service,
 	}
 }
 
@@ -31,6 +34,15 @@ func (m *Middleware) Auth(ctx *fiber.Ctx) error {
 	claims, err := m.parseJwt(token)
 	if err != nil {
 		return fiber.ErrUnauthorized
+	}
+
+	exist, err := m.service.CheckUserInfoExist(ctx.Context(), claims.UserID)
+	if err != nil {
+		return err
+	}
+
+	if !exist {
+		return ctx.Status(fiber.StatusForbidden).SendString("enrich profile")
 	}
 
 	ctx.Locals(claimsKey, claims)

@@ -52,7 +52,9 @@ func Run(ctx context.Context, cfg *config.Config) (err error) {
 		return c.Next()
 	})
 
-	binder := binder.NewBinder(app, handler)
+	mw := binder.New("asdqwe2131241eqeqw", service.Auth)
+
+	binder := binder.NewBinder(app, handler, mw)
 	binder.BindRoutes()
 
 	return app.Listen(":8080")

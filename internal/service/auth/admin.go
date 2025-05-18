@@ -139,7 +139,7 @@ func (s *Service) EnrichUserProfile(ctx context.Context, req models.EnrichProfil
 		userInfo.ImageUrl = null.NewString(fmt.Sprintf(fileURL, s.cfg.S3ImageUrl, idStr), true)
 	}
 
-	err = s.repo.InserUserInfo(ctx, userInfo)
+	err = s.repo.InsertUserInfo(ctx, userInfo)
 	if err != nil {
 		return err
 	}
@@ -186,4 +186,8 @@ func (s *Service) generateJWT(claims *models.ClaimsJwt) (jwtToken string, err er
 	}
 
 	return jwtToken, err
+}
+
+func (s *Service) CheckUserInfoExist(ctx context.Context, userID uuid.UUID) (exist bool, err error) {
+	return s.repo.CheckUserInfoExists(ctx, userID)
 }

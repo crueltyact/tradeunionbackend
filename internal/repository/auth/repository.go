@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/google/uuid"
 	"profkom/internal/entities"
 
 	trmsqlx "github.com/avito-tech/go-transaction-manager/sqlx"
@@ -157,4 +158,26 @@ func (r *Repository) SelectUserByLogin(ctx context.Context, login string) (user 
 	}
 
 	return user, err
+}
+
+func (r *Repository) CheckUserInfoExists(ctx context.Context, userID uuid.UUID) (exists bool, err error) {
+	query := `
+		select exists(
+				select 1
+				from auth.user_info
+				where 
+					user_id = $1 
+			) as result
+	`
+	err = r.ctxGetter.DefaultTrOrDB(ctx, r.db).GetContext(
+		ctx,
+		&exists,
+		query,
+		userID,
+	)
+	if err != nil {
+		return exists, err
+	}
+
+	return exists, err
 }
