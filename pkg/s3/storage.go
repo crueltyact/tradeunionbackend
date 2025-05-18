@@ -4,6 +4,9 @@ import (
 	"bytes"
 	"context"
 	"io"
+	"mime"
+	"net/http"
+	"path/filepath"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 
@@ -51,16 +54,25 @@ func New(
 }
 
 func (c *Client) UploadFile(ctx context.Context, key *string, reader io.Reader) error {
-	_, err := c.s3.PutObject(ctx, &s3.PutObjectInput{
-		Bucket: aws.String(c.cfg.Bucket),
-		Key:    key,
-		Body:   reader,
-		ContentDisposition: aws.String("inline"),
-	},)
-	if err != nil {
-		return err
+	// Автоматическое определение типа по расширению
+	ext := filepath.Ext(*key)
+	mimeType := http.DetectContentType([]byte(ext)) // лучше использовать mime.TypeByExtension
+	if mimeType == "application/octet-stream" {
+		mimeType = "application/octet-stream" // fallback
+	} else {
+		mimeType = mime.TypeByExtension(ext)
+		if mimeType == "" {
+			mimeType = "application/octet-stream"
+		}
 	}
 
+	_, err := c.s3.PutObject(ctx, &s3.PutObjectInput{
+		Bucket:             aws.String(c.cfg.Bucket),
+		Key:                key,
+		Body:               reader,
+		ContentDisposition: aws.String("inline"),
+		ContentType:        aws.String(mimeType),
+	})
 	return err
 }
 
