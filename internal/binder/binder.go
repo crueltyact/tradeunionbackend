@@ -39,7 +39,7 @@ func (b *Binder) mapAdmin() {
 
 		auth.Post("/token", b.mw.Auth, b.handler.Auth.PostInviteToken)
 
-		auth.Post("/enrich-profile", b.mw.Auth, b.handler.Auth.EnrichProfile)
+		auth.Post("/enrich-profile", b.mw.AuthEnrichProfile, b.handler.Auth.EnrichProfile)
 	}
 
 	{

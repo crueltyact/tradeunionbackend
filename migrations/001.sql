@@ -97,6 +97,7 @@ CREATE TABLE IF NOT EXISTS chat.messages (
     content TEXT,
     user_id UUID,
     chat_id UUID,
+    role text,
     created_at TIMESTAMP DEFAULT now(),
     updated_at TIMESTAMP DEFAULT now(),
     FOREIGN KEY (chat_id) REFERENCES chat.chat(id) ON DELETE CASCADE

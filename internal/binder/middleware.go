@@ -28,6 +28,19 @@ func New(secret string, service *auth.Service) *Middleware {
 	}
 }
 
+func (m *Middleware) AuthEnrichProfile(ctx *fiber.Ctx) error {
+	token := ctx.Get("Authorization")
+
+	claims, err := m.parseJwt(token)
+	if err != nil {
+		return fiber.ErrUnauthorized
+	}
+
+	ctx.Locals(claimsKey, claims)
+
+	return ctx.Next()
+}
+
 func (m *Middleware) Auth(ctx *fiber.Ctx) error {
 	token := ctx.Get("Authorization")
 
