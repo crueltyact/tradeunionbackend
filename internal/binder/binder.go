@@ -85,6 +85,8 @@ func (b *Binder) mapAdmin() {
 		chat.Get("/", b.mw.Auth, b.handler.Chat.GetChats)
 
 		chat.Get("/ws/:chat_id", b.mw.AuthWebsocket, websocket.New(b.handler.Chat.HandleConnection))
+
+		chat.Delete("/:chat_id", b.mw.Auth, b.handler.Chat.DeleteChat)
 	}
 }
 

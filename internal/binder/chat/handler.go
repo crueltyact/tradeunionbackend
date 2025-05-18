@@ -261,3 +261,14 @@ func (h *Handler) HandleClientConnection(c *websocket.Conn) {
 		}
 	}
 }
+
+func (h *Handler) DeleteChat(c *fiber.Ctx) error {
+	chatID := c.Params("chat_id")
+
+	err := h.service.DeleteChat(c.Context(), chatID)
+	if err != nil {
+		return err
+	}
+
+	return err
+}

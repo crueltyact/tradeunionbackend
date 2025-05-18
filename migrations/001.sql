@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS chat.chat_users (
     chat_id UUID,
     user_id UUID,
     UNIQUE(chat_id, user_id),
-    FOREIGN KEY (chat_id) REFERENCES chat.chat(id)
+    FOREIGN KEY (chat_id) REFERENCES chat.chat(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS chat.messages (
@@ -99,5 +99,5 @@ CREATE TABLE IF NOT EXISTS chat.messages (
     chat_id UUID,
     created_at TIMESTAMP DEFAULT now(),
     updated_at TIMESTAMP DEFAULT now(),
-    FOREIGN KEY (chat_id) REFERENCES chat.chat(id)
+    FOREIGN KEY (chat_id) REFERENCES chat.chat(id) ON DELETE CASCADE
 );

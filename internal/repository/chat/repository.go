@@ -254,7 +254,14 @@ func (r *Repository) SelectClient(ctx context.Context, client *entities.Client) 
 
 func (r *Repository) SelectTradeUnionWorkerIDForHelp(ctx context.Context) (worker entities.User, err error) {
 	query := `
-		SELECT * FROM auth."user"
+		SELECT
+			id,
+			role,
+			login,
+			password,
+			created_at
+		FROM auth."user"
+			JOIN auth.user_info ui ON ui.user_id = auth.user.id
 		where role = 'worker'
 		ORDER BY random()
 		LIMIT 1
@@ -360,4 +367,21 @@ func (r *Repository) SelectUserIDByTradeUnionID(ctx context.Context, tradeUnionI
 	}
 
 	return id, err
+}
+
+func (r *Repository) DeleteChat(ctx context.Context, chatID uuid.UUID) (err error) {
+	query := `
+		delete from chat.chat where id = $1
+	`
+
+	_, err = r.ctxGetter.DefaultTrOrDB(ctx, r.db).ExecContext(
+		ctx,
+		query,
+		chatID,
+	)
+	if err != nil {
+		return err
+	}
+
+	return err
 }

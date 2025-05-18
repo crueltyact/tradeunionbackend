@@ -251,3 +251,17 @@ func (s *Service) CreateClientChat(ctx context.Context, req models.PostClientCha
 func (s *Service) GetUserIDByTradeUnionID(ctx context.Context, tradeUinonID string) (uuid.UUID, error) {
 	return s.repo.SelectUserIDByTradeUnionID(ctx, tradeUinonID)
 }
+
+func (s *Service) DeleteChat(ctx context.Context, chatID string) (err error) {
+	uuid, err := uuid.Parse(chatID)
+	if err != nil {
+		return err
+	}
+
+	err = s.repo.DeleteChat(ctx, uuid)
+	if err != nil {
+		return err
+	}
+	
+	return err
+}
