@@ -165,23 +165,6 @@ func (s *Service) CreateClientChat(ctx context.Context, req models.PostClientCha
 			}
 		}
 
-		worker, err := s.repo.SelectTradeUnionWorkerIDForHelp(ctx)
-		if err != nil {
-			return err
-		}
-
-		workerInfo, err := s.repo.SelectWorkerInfo(ctx, worker.ID)
-		if err != nil {
-			return err
-		}
-
-		resp.Worker = models.Worker{
-			FirstName:  workerInfo.FirstName,
-			SecondName: workerInfo.SecondName,
-			Patronymic: workerInfo.Patronymic,
-			ImageURL:   workerInfo.ImageUrl.String,
-		}
-
 		chatExist, err := s.repo.SelectChatExist(ctx, client.UserID)
 		if err != nil {
 			return err
@@ -211,9 +194,43 @@ func (s *Service) CreateClientChat(ctx context.Context, req models.PostClientCha
 				})
 			}
 
+			workerID, err := s.repo.SelectWorkerByChatID(ctx, chat.ID, client.UserID)
+			if err != nil {
+				return err
+			}
+
+			workerInfo, err := s.repo.SelectWorkerInfo(ctx, workerID)
+			if err != nil {
+				return err
+			}
+
+			resp.Worker = models.Worker{
+				FirstName:  workerInfo.FirstName,
+				SecondName: workerInfo.SecondName,
+				Patronymic: workerInfo.Patronymic,
+				ImageURL:   workerInfo.ImageUrl.String,
+			}
+
 			resp.ChatID = chat.ID.String()
 			resp.Messages = msgs
 		} else {
+			worker, err := s.repo.SelectTradeUnionWorkerIDForHelp(ctx)
+			if err != nil {
+				return err
+			}
+
+			workerInfo, err := s.repo.SelectWorkerInfo(ctx, worker.ID)
+			if err != nil {
+				return err
+			}
+
+			resp.Worker = models.Worker{
+				FirstName:  workerInfo.FirstName,
+				SecondName: workerInfo.SecondName,
+				Patronymic: workerInfo.Patronymic,
+				ImageURL:   workerInfo.ImageUrl.String,
+			}
+
 			chat := &entities.Chat{
 				ID:    uuid.New(),
 				Title: req.TradeUnionID,
@@ -262,6 +279,6 @@ func (s *Service) DeleteChat(ctx context.Context, chatID string) (err error) {
 	if err != nil {
 		return err
 	}
-	
+
 	return err
 }

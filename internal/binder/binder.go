@@ -66,7 +66,7 @@ func (b *Binder) mapAdmin() {
 	{
 		project := v1.Group("/project")
 
-		project.Post("/", b.handler.Project.PostProject)
+		project.Post("/", b.mw.Auth, b.handler.Project.PostProject)
 
 		project.Delete("/:project_id", b.mw.Auth, b.handler.Project.DeleteProject)
 	}

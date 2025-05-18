@@ -385,3 +385,25 @@ func (r *Repository) DeleteChat(ctx context.Context, chatID uuid.UUID) (err erro
 
 	return err
 }
+
+func (r *Repository) SelectWorkerByChatID(ctx context.Context, chatID, participant uuid.UUID) (ID uuid.UUID, err error) {
+	query := `
+		select 
+			user_id
+		from chat.chat_users
+		where chat_id = $1 and user_id != $2
+	`
+
+	err = r.ctxGetter.DefaultTrOrDB(ctx, r.db).GetContext(
+		ctx,
+		&ID,
+		query,
+		chatID,
+		participant,
+	)
+	if err != nil {
+		return ID, err
+	}
+
+	return ID, err
+}
